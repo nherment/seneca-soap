@@ -1,14 +1,14 @@
 {
-  "name"        : "seneca-soap",
-  "version"     : "0.1.0",
-  "description" : "seneca soap API",
-  "main"        : "soap.js",
+  "name": "seneca-soap",
+  "version": "0.1.0",
+  "description": "seneca soap API",
+  "main": "soap.js",
   "scripts": {
-    "test"      : "mocha test --reporter spec"
+    "test": "mocha test --reporter spec"
   },
   "repository": {
-    "type"      : "git",
-    "url"       : "git://github.com/nherment/seneca-soap.git"
+    "type": "git",
+    "url": "git://github.com/nherment/seneca-soap.git"
   },
   "keywords": [
     "seneca",
@@ -16,20 +16,23 @@
     "api",
     "webservice"
   ],
-  "author"      : "Nicolas Herment <nherment@gmail.com>",
-  "license"     : "MIT",
+  "author": "Nicolas Herment <nherment@gmail.com>",
+  "license": "MIT",
   "bugs": {
-    "url"       : "https://github.com/nherment/seneca-soap/issues"
+    "url": "https://github.com/nherment/seneca-soap/issues"
   },
-  "homepage"    : "https://github.com/nherment/seneca-soap",
+  "homepage": "https://github.com/nherment/seneca-soap",
+
   "dependencies": {
-    "soap"      : "0.4.5"
+    "soap": "0.4.5",
+    "underscore": "1.6.0"
   },
+
   "peerDependencies": {
-    "soap"      : "0.4.5",
-    "seneca"    : "0.5.17"
+    "seneca": "0.5.17"
   },
+
   "devDependencies": {
-    "mocha"     : "1.18.2"
+    "mocha": "1.18.2"
   }
 }

@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns:tns="urn:TestModule"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+             xmlns:TestModule="urn:TestModule"
+             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+             xmlns="http://schemas.xmlsoap.org/wsdl/"
+             name="urn:TestModule"
+             targetNamespace="urn:TestModule"
+             >
+  <types>
+    <schema xmlns:SOAP-ENV="http://www.w3.org/2003/05/soap-envelope"
+            xmlns:SOAP-ENC="http://www.w3.org/2003/05/soap-encoding"
+            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            xmlns:TestModule="urn:TestModule"
+            xmlns="http://www.w3.org/2001/XMLSchema"
+            targetNamespace="urn:TestModule"
+            elementFormDefault="unqualified"
+            attributeFormDefault="unqualified"
+            >
+      <import namespace="http://www.w3.org/2003/05/soap-encoding"/>
+      <complexType name="pingParams">
+        <sequence>
+          <element name="name" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+        </sequence>
+      </complexType>
+      <complexType name="pongParams">
+        <sequence>
+          <element name="error" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+          <element name="greeting" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+        </sequence>
+      </complexType>
+    </schema>
+  </types>
+
+  <message name="pingRequest">
+    <part name="params" type="TestModule:pingParams"/>
+  </message>
+  <message name="pingResponse">
+    <part name="params" type="TestModule:pongParams"/>
+  </message>
+
+
+  <portType name="TestModule">
+    <operation name="ping">
+      <input message="tns:pingRequest"/>
+      <output message="tns:pingResponse"/>
+    </operation>
+  </portType>
+
+  <binding name="TestModule" type="tns:TestModule">
+    <soap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <operation name="ping">
+      <soap:operation style="rpc"/>
+      <input>
+        <soap:body use="encoded" namespace="urn:TestModule" encodingStyle="http://www.w3.org/2003/05/soap-encoding"/>
+      </input>
+      <output>
+        <soap:body use="encoded" namespace="urn:TestModule" encodingStyle="http://www.w3.org/2003/05/soap-encoding"/>
+      </output>
+    </operation>
+  </binding>
+
+  <service name="TestModule">
+    <port name="TestModule" binding="tns:TestModule">
+      <soap:address location="http://127.0.0.1:8004/TestModule"/>
+    </port>
+  </service>
+
+</definitions>

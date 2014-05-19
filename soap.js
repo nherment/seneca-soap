@@ -3,15 +3,15 @@ var pluginName = 'soap'
 var soap   = require('soap')
 var assert = require('assert')
 var _      = require('underscore')
+var http   = require('http')
 
 var DEFAULT_PORT = 8004
 
-function soap(options) {
+function soapPlugin(options) {
 
   var seneca = this
 
   var server = options.server
-  var wsdlList = []
 
   seneca.add({role: pluginName, cmd: 'register'}, function(args, callback) {
 
@@ -25,43 +25,52 @@ function soap(options) {
     var service = {}
     service[serviceName] = {}
 
-    var port = service[serviceName][serviceName + 'Port'] = {}
+    var port = service[serviceName][serviceName] = {}
 
     for(var mappingName in args.mappings) {
       port[mappingName] = buildMapping(this, mappingName, args.mappings[mappingName])
     }
 
-    soap.listen(server, '/'+serviceName, service, wsdl)
+    seneca.log.info('exposing SOAP service [' + serviceName + '] with operations [' + Object.keys(port) + ']')
+
+    var srv = soap.listen(server, '/' + serviceName, service, wsdl)
+
+    srv.log = seneca.log.debug
+
+    setImmediate(callback)
 
   })
 
-  seneca.add({role: pluginName, cmd: 'init'}, function(args, callback) {
+  seneca.add({init: pluginName}, function(args, callback) {
 
     if(!server) {
+      server = http.createServer()
       server.listen(options.port || DEFAULT_PORT, function(err) {
         if(err) throw err
         seneca.log.info('soap API started on port ['+DEFAULT_PORT+']')
       })
     }
 
-    for(var i = 0 ; i < wsdlList.length ; i++) {
-      soap.listen(server, '/wsdl', myService, xml)
-    }
+    callback()
 
   })
+
+  return {
+    name: pluginName
+  }
 
 }
 
 function buildMapping(seneca, name, senecaArgs) {
-  return function(args, callback) {
 
+  return function(args, callback) {
     for(var attr in senecaArgs) {
       args[attr] = senecaArgs[attr]
     }
 
     seneca.act(args, function(err, result) {
 
-      callback({error: err, result: result})
+      callback(err || result)
 
     })
 
@@ -69,4 +78,4 @@ function buildMapping(seneca, name, senecaArgs) {
 }
 
 
-module.exports = soap
+module.exports = soapPlugin
