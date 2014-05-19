@@ -7,8 +7,8 @@ var seneca = require('seneca')()
 seneca.use('../soap.js')
 
 describe('soap', function() {
-  this.timeout(10*1000)
 
+  this.timeout(10*1000)
 
   var callCount = 0
   seneca.add({role: 'soap-test', cmd: 'ping'}, function(args, callback) {

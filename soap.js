@@ -7,7 +7,9 @@ var http   = require('http')
 
 var DEFAULT_PORT = 8004
 
-function soapPlugin(options) {
+module.exports = function(options) {
+
+  options = options || {}
 
   var seneca = this
 
@@ -77,5 +79,3 @@ function buildMapping(seneca, name, senecaArgs) {
   }
 }
 
-
-module.exports = soapPlugin
