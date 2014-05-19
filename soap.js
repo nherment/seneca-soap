@@ -35,13 +35,32 @@ module.exports = function(options) {
 
     seneca.log.info('exposing SOAP service [' + serviceName + '] with operations [' + Object.keys(port) + ']')
 
-    var srv = soap.listen(server, '/' + serviceName, service, wsdl)
-
-    srv.log = seneca.log.debug
+    expose('/' + serviceName, service, wsdl)
 
     setImmediate(callback)
 
   })
+
+  var delay = true
+  var queue = []
+  function expose(path, service, wsdl) {
+    if(delay) {
+      queue.push({path: path, service: service, wsdl: wsdl})
+    } else {
+      var srv = soap.listen(server, '/' + serviceName, service, wsdl)
+      srv.log = seneca.log.debug
+    }
+  }
+  function processQueue() {
+
+    while(queue.length > 0) {
+      var serviceDef = queue.pop()
+
+      var srv = soap.listen(server, serviceDef.path, serviceDef.service, serviceDef.wsdl)
+      srv.log = seneca.log.debug
+
+    }
+  }
 
   seneca.add({init: pluginName}, function(args, callback) {
 
@@ -49,6 +68,8 @@ module.exports = function(options) {
       server = http.createServer()
       server.listen(options.port || DEFAULT_PORT, function(err) {
         if(err) throw err
+        delay = false
+        processQueue()
         seneca.log.info('soap API started on port ['+DEFAULT_PORT+']')
       })
     }
@@ -63,6 +84,18 @@ module.exports = function(options) {
 
 }
 
+function prepareForSerialization(obj) {
+  var serializable = {}
+  if(obj) {
+    for(var attr in obj) {
+      if(obj.hasOwnProperty(attr))  {
+        serializable[attr] = obj
+      }
+    }
+  }
+  return serializable
+}
+
 function buildMapping(seneca, name, senecaArgs) {
 
   return function(args, callback) {
@@ -71,6 +104,15 @@ function buildMapping(seneca, name, senecaArgs) {
     }
 
     seneca.act(args, function(err, result) {
+      if(result) {
+        // remove the junk because the sax parser will complain about serialized functions and attributes ending with '$'
+        result = JSON.parse(JSON.stringify(result))
+        for(var attr in result) {
+          if(/\$$/.test(attr)) {
+            delete result.id$
+          }
+        }
+      }
 
       callback(err || result)
 
