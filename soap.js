@@ -35,7 +35,7 @@ module.exports = function(options) {
 
     seneca.log.info('exposing SOAP service [' + serviceName + '] with operations [' + Object.keys(port) + ']')
 
-    expose('/' + serviceName, service, wsdl)
+    expose('/' + serviceName, serviceName, service, wsdl)
 
     setImmediate(callback)
 
@@ -43,7 +43,7 @@ module.exports = function(options) {
 
   var delay = true
   var queue = []
-  function expose(path, service, wsdl) {
+  function expose(path, serviceName, service, wsdl) {
     if(delay) {
       queue.push({path: path, service: service, wsdl: wsdl})
     } else {
@@ -120,4 +120,3 @@ function buildMapping(seneca, name, senecaArgs) {
 
   }
 }
-
