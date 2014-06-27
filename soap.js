@@ -66,11 +66,12 @@ module.exports = function(options) {
 
     if(!server) {
       server = http.createServer()
-      server.listen(options.port || DEFAULT_PORT, function(err) {
+      var port = options.port || DEFAULT_PORT
+      server.listen(port, function(err) {
         if(err) throw err
         delay = false
         processQueue()
-        seneca.log.info('soap API started on port ['+DEFAULT_PORT+']')
+        seneca.log.info('soap API started on port ['+port+']')
       })
     }
 
