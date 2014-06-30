@@ -110,7 +110,7 @@ function buildMapping(seneca, name, senecaArgs) {
         result = JSON.parse(JSON.stringify(result))
         for(var attr in result) {
           if(/\$$/.test(attr)) {
-            delete result.id$
+            delete result[attr]
           }
         }
       }
